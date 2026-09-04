@@ -42,6 +42,17 @@ pass finds the defects one reader would have found alone.
 Never write outside `<output-dir>`. The spec files themselves are read-only —
 this command never edits a spec, however tempting the fix looks.
 
+### While they run
+
+The readers are tracked work: you are re-invoked automatically as each one
+finishes. So do nothing while you wait. Do not poll them, do not re-read their
+output paths hoping a file has appeared, and do not schedule a wake-up — a timer
+is not what tells you they are done, and scheduling one is both unnecessary and
+a common source of malformed tool calls.
+
+Report each completion in one line (`<perspective> finished, N blocked rows`),
+and say what you are still waiting on. Nothing else until all three return.
+
 ## 3. Consolidate
 
 Read the three files per spec, then write `<output-dir>/<SPEC-ID>/consolidated.md`:
