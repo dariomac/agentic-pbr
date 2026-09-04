@@ -1,0 +1,11 @@
+{
+  "name": "agentic-pbr",
+  "owner": { "name": "Darío Macchi" },
+  "plugins": [
+    {
+      "name": "apbr",
+      "source": "./",
+      "description": "Agentic Perspective-Based Reading — blind tester/designer/user readers over a requirement spec."
+    }
+  ]
+}

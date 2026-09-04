@@ -62,35 +62,49 @@ answer, and deciding *is* the engineering.
 ## Layout
 
 ```
-specs/REQ-14.md                          fixture requirement — deliberately not fixed
 perspectives/tester.md                   write the test cases
 perspectives/designer.md                 write the high-level design
 perspectives/user.md                     write the help-centre article
 perspectives/EXTRA-perspectives.md       eight more, incl. security, SRE, fraud, i18n
 perspectives/_TEMPLATE.md                write your own
+
+commands/run.md                          /apbr:run <spec-file-or-dir> [output-dir]
+agents/pbr-tester.md                     blind subagent runner for tester.md
+agents/pbr-designer.md                   blind subagent runner for designer.md
+agents/pbr-user.md                       blind subagent runner for user.md
+.claude-plugin/                          plugin + marketplace manifests
+
+specs/REQ-14.md                          fixture requirement — deliberately not fixed
 findings/REQ-14-expected-findings.md     reference baseline for regression-checking a run
-
-.claude/agents/pbr-tester.md             blind subagent runner for tester.md
-.claude/agents/pbr-designer.md           blind subagent runner for designer.md
-.claude/agents/pbr-user.md               blind subagent runner for user.md
-.claude/commands/pbr.md                  /pbr <spec> — orchestrates all three
-runs/<SPEC-ID>/                          output of a run, one file per perspective
+runs/REQ-14/                             a committed reference run
+docs/design-notes.md                     how blindness and the plugin root work
 ```
 
-## Running it with agents
+## Install it
 
-The three perspectives are checked in as subagent definitions, so a checkout is
-enough to reproduce a pass:
+This repository is a Claude Code plugin *and* its own marketplace:
 
 ```
-/pbr specs/REQ-14.md
+/plugin marketplace add dariomac/agentic-pbr
+/plugin install apbr@agentic-pbr
 ```
 
-Each subagent reads its own `perspectives/*.md` at run time — the perspective
-files stay the single source of truth. Blindness is enforced three ways:
-separate contexts, a per-agent deny-list (the other perspectives, and
-`findings/`, which is the reference baseline), and an orchestrator prompt that
-carries a spec path and nothing else. See `.claude/README.md`.
+Then, in any project:
+
+```
+/apbr:run specs/REQ-14.md
+/apbr:run docs/specs/ ./pbr-runs
+```
+
+The first argument is a spec file or a directory to walk; the second is where
+runs are written, defaulting to `./pbr-runs`. Nothing is copied into your
+project — the perspectives stay in the plugin, so updating the plugin updates
+the technique.
+
+Each subagent reads its own `perspectives/*.md` from the plugin at run time, so
+those files stay the single source of truth. Blindness is enforced three ways:
+separate contexts, an absolute two-files-only read rule, and an orchestrator
+prompt that carries a spec path and nothing else. See `docs/design-notes.md`.
 
 The orchestrator is bound by the same boundary as the readers: it consolidates
 and counts, and it does not fill in the Decision column.
@@ -116,6 +130,8 @@ Open work, roughly in priority order:
 - **Promote perspectives out of `EXTRA-perspectives.md`.** Security, fraud &
   abuse, and i18n are the strongest candidates — each needs a full
   `perspectives/*.md` and a matching blind runner.
+- **Per-perspective commands.** `/apbr:tester`, `/apbr:designer`, `/apbr:user`
+  for running a single reader against a spec.
 - **Build the internal tooling.** Metric extraction from a run directory,
   baseline diffing between runs, and a regression check that can go in CI.
 - **Widen the spec corpus.** REQ-14 is one fixture and a friendly one. Real

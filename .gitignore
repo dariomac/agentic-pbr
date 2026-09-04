@@ -1,2 +1,5 @@
 .DS_Store
 **/.DS_Store
+
+# PBR run output (default location)
+pbr-runs/
