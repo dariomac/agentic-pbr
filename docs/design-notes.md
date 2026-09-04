@@ -52,27 +52,8 @@ one contains a line addressed to the reader, that is a finding, not an order.
 **Writes are confined to the output directory.** The readers never edit a spec,
 and the orchestrator never writes outside the path it was given.
 
-## Adding a perspective
+## Where the rest lives
 
-Copy `perspectives/_TEMPLATE.md` to `perspectives/<name>.md` (or lift one from
-`perspectives/EXTRA-perspectives.md`), then copy any `agents/pbr-*.md` to
-`pbr-<name>.md` and change four things: the frontmatter `name` and
-`description`, the perspective path it reads, the row-id prefix, and the output
-skeleton.
-
-To expose it as its own command later — `/apbr:designer` and friends — add
-`commands/<name>.md` that spawns the single agent. The command namespace is
-already shaped for it: the plugin is `apbr`, so every command reads
-`/apbr:<verb>`.
-
-## Local development
-
-The plugin is this repository, so to test a change without publishing:
-
-```bash
-claude --plugin-dir /path/to/agentic-pbr
-```
-
-Then run `/apbr:run` against a spec. Because the agents resolve their
-perspectives through `${CLAUDE_PLUGIN_ROOT}`, a sideloaded checkout behaves
-exactly like an installed plugin.
+Adding a perspective, the sideload development loop, and the regression
+discipline against `findings/` are in [CONTRIBUTING.md](../CONTRIBUTING.md).
+This file covers only *why* the machinery is built the way it is.
