@@ -51,8 +51,24 @@ installing takes two steps:
 The first line doesn't publish anything — despite how it reads, it registers
 this repository locally as a place you can install from, alongside whatever
 marketplaces you already have. The second installs the plugin from it. You only
-ever do the first line once; after that, `/plugin marketplace update
-agentic-pbr` picks up new versions.
+ever do the first line once.
+
+### Updating
+
+Also two steps, and both are needed:
+
+```
+/plugin marketplace update agentic-pbr
+/plugin update apbr
+```
+
+The first re-fetches this repository; the second updates your installed copy
+from it. The marketplace is a local cache, so running only the second finds
+nothing new, and running only the first leaves the plugin you actually use
+untouched.
+
+Restart the session afterwards — commands and agents are read at startup, so a
+running session keeps the old ones.
 
 ## Run it
 
