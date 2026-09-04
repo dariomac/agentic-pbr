@@ -40,12 +40,19 @@ Eight more — security, SRE, fraud, i18n and others — are sketched in
 
 ## Install
 
-This repository is a Claude Code plugin *and* its own marketplace:
+This repository is a Claude Code plugin *and* its own marketplace, so
+installing takes two steps:
 
 ```
 /plugin marketplace add dariomac/agentic-pbr
 /plugin install apbr@agentic-pbr
 ```
+
+The first line doesn't publish anything — despite how it reads, it registers
+this repository locally as a place you can install from, alongside whatever
+marketplaces you already have. The second installs the plugin from it. You only
+ever do the first line once; after that, `/plugin marketplace update
+agentic-pbr` picks up new versions.
 
 ## Run it
 
