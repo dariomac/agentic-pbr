@@ -66,6 +66,35 @@ Read the three files per spec, then write `<output-dir>/<SPEC-ID>/consolidated.m
 - the metrics: blocked rows per perspective, distinct spec clauses implicated,
   ambiguity density.
 
+### Separate what the spec already admitted from what the readers found
+
+Before counting anything, scan the spec for gaps it declares about itself: a
+"Known gaps", "Open questions" or "Open decisions" section, and inline markers
+like `TBD`, `TODO`, `underspecified`, `not specified`, `unresolved`, `to be
+confirmed`, or a reference to a numbered open decision.
+
+Then mark every blocked row **pre-announced** or **discovered**, and report the
+two counts separately.
+
+This is not bookkeeping — it is what makes the corroboration number mean
+anything. Three readers agreeing on a clause the spec explicitly flags is the
+expected outcome, not a signal: the document sent all three to the same place.
+Corroboration is evidence of independent discovery **only on clauses the spec
+did not pre-announce.** Say so plainly in the consolidated file, and do not
+report a headline finding that rests on a pre-announced gap without labelling
+it as one.
+
+A pre-announced row still has value when it goes further than the announcement
+— naming a consequence, a scope, or an owner the spec never mentions. Mark
+those **extended**, and say what they added.
+
+### Do not claim independence you cannot verify
+
+The readers read the whole spec, including any section listing its own gaps.
+Never write that a perspective did not see something that is in the spec. You
+did not observe the readers' reasoning; you only have their output files. State
+what the files show and nothing more.
+
 For a directory run, also write `<output-dir>/summary.md`: one row per spec with
 its blocked-row counts, so the weakest specs are visible at a glance.
 
