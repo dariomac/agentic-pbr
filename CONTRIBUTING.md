@@ -14,7 +14,11 @@ This repo is both the `apbr` plugin and the marketplace that serves it.
 perspectives/tester.md                   write the test cases
 perspectives/designer.md                 write the high-level design
 perspectives/user.md                     write the help-centre article
-perspectives/EXTRA-perspectives.md       eight more, incl. security, SRE, fraud, i18n
+perspectives/maintainer.md               map functions, dependencies, rationale   🧪
+perspectives/verifier.md                 negative requirements, failure analysis 🧪
+perspectives/regulator.md                obligations, references, consistency    🧪
+perspectives/contractor.md               assumed knowledge, alternative readings 🧪
+perspectives/EXTRA-perspectives.md       further sketches, incl. security, fraud, i18n
 perspectives/_TEMPLATE.md                write your own
 
 commands/run.md                          /apbr:run <spec-file-or-dir> [output-dir]
@@ -105,9 +109,18 @@ them needs to argue the case explicitly.
 Roughly in priority order:
 
 - **Sharpen the three core perspectives**, against the baseline as described above.
-- **Promote perspectives out of `EXTRA-perspectives.md`.** Security, fraud &
-  abuse, and i18n are the strongest candidates — each needs a full
-  `perspectives/*.md` and a matching blind runner.
+- **Promote further perspectives out of `EXTRA-perspectives.md`.** Security and
+  fraud & abuse are the strongest remaining candidates — each needs a full
+  `perspectives/*.md` and a matching blind runner. Check first whether the
+  shipped `verifier` already covers it.
+- **Graduate the four experimental perspectives.** Maintainer, verifier,
+  regulator and contractor ship marked 🧪: adapted from published scenarios, but
+  with no baseline of their own and no evidence yet about which earn their cost
+  or how much they overlap the stable three. The source report says plainly that
+  only real use reveals which scenarios deserve to stay. To move one out of
+  experimental it needs a reference baseline of its own under `findings/`, and
+  runs against specs nobody wrote for it. Reports of a perspective performing
+  *badly* are as useful as reports of it working.
 - **Per-perspective commands.** `/apbr:tester`, `/apbr:designer`, `/apbr:user`
   for running a single reader against a spec.
 - **Internal tooling.** Metric extraction from a run directory, baseline diffing

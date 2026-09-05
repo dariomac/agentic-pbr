@@ -5,10 +5,19 @@
 You write the product documentation. This feature ships next week and you are
 writing the help-centre article a real customer will read.
 
+You want to know whether the requirements describe the system's common
+functions **completely and correctly** — as the person who has to use it, not
+build it.
+
 ## 2. Produce the artifact — do this FIRST
 
-**Write the help-centre article.** It must answer, in plain language a customer
-would accept:
+**First, list the flows.** Enumerate the most common paths through this feature
+*and* the most critical ones — the rare paths where getting it wrong costs the
+user something they can't undo. For each, name the inputs the user must supply
+and the outputs they get back.
+
+**Then write the help-centre article.** It must answer, in plain language a
+customer would accept:
 
 - What do I get, exactly?
 - What do I have to do to get it?
@@ -26,14 +35,19 @@ have to write a sentence you cannot support from the spec.
 ## 3. Then answer these questions
 
 1. Which customer questions above could you not answer at all?
-2. How does the user *discover* this happened? Is any notification, badge, or
+2. Was all the information needed to write the flows available, or did you have
+   to assume a step?
+3. How does the user *discover* this happened? Is any notification, badge, or
    screen actually required by the spec, or did you assume one?
-3. Is the visibility of the state defined — can the user see it before it
+4. Is the visibility of the state defined — can the user see it before it
    matters to them?
-4. Are all the affected parties covered? If the spec involves two people, is
+5. **Is there an action a user could take, in good faith, that causes harm or
+   loss?** Is the correct behaviour in that situation obvious from the interface
+   the spec describes, or only from knowing how it works inside?
+6. Are all the affected parties covered? If the spec involves two people, is
    the second person's experience specified, or silently empty?
-5. What would a user try that the spec doesn't forbid — and would that be abuse?
-6. Is there anything here you'd have to word vaguely to avoid promising
+7. What would a user try that the spec doesn't forbid — and would that be abuse?
+8. Is there anything here you'd have to word vaguely to avoid promising
    something the system might not do? Vague documentation is a spec defect,
    not a writing problem.
 
@@ -49,3 +63,9 @@ have to write a sentence you cannot support from the spec.
    the failure this perspective exists to catch.
 3. **Never fill in the Decision column.**
 4. A finished article with no blocked rows is a valid, reportable outcome.
+
+---
+
+*Adapted from the seven PBR reading scenarios in J. Lahtinen, "Application of the
+perspective-based reading technique in the nuclear I&C context" (VTT Technology 9,
+CORSICA work report 2011), generalised from nuclear I&C to any software domain.*

@@ -1,12 +1,64 @@
 ---
-description: Run a blind Perspective-Based Reading pass (tester, designer, user) over a spec file or a directory of specs
-argument-hint: <spec-file-or-dir> [output-dir]
+description: Run a blind Perspective-Based Reading pass over a spec file or a directory of specs, using a selectable set of perspectives (tester, designer, user, maintainer, verifier, regulator, contractor)
+argument-hint: <spec-file-or-dir> [output-dir] [perspectives]
 ---
 
-Run a Perspective-Based Reading pass.
+Run a Perspective-Based Reading pass over these arguments:
 
-- **Spec target:** `$1` — a single spec file, or a directory to walk.
-- **Output directory:** `$2` — defaults to `./pbr-runs` if not given.
+```
+$ARGUMENTS
+```
+
+Split that line on whitespace and read it positionally. Do not use any other
+source for these values, and do not infer them from the surrounding
+conversation:
+
+1. **Spec target** (required) — a single spec file, or a directory to walk.
+2. **Output directory** (optional) — defaults to `./pbr-runs`.
+3. **Perspectives** (optional) — a comma-separated list, defaulting to
+   `tester,designer,user`. It is the only argument that contains no `/` or `.`,
+   which is how you tell it apart from a path if you are ever unsure.
+
+If the line is empty, say what the command expects and stop. If a value is
+present but you cannot tell which slot it belongs to, ask — never guess at a
+spec path or an output directory, because guessing wrong either reads the wrong
+document or writes into the wrong project.
+
+Echo the three resolved values back before doing anything else, so a
+misreading is visible immediately.
+
+## 0. Choose the perspectives
+
+Seven are available:
+
+| Name | Produces | Reads for |
+|---|---|---|
+| `tester` | Acceptance test cases | Values you cannot fill in; untestable claims |
+| `designer` | High-level design and data flow | Missing entities, states, interfaces, constraints |
+| `user` | Help-centre article | What the customer is never told; unspecified parties |
+| `maintainer` 🧪 | Function and dependency map | Unrecorded rationale, coupling, duplication, traceability |
+| `verifier` 🧪 | Negative requirements and failure analysis | Behaviour the spec forgot to forbid; correlated failure |
+| `regulator` 🧪 | Obligations list and structural map | Standards, references, internal inconsistency, evidence |
+| `contractor` 🧪 | Assumed-knowledge list and alternative readings | Tribal knowledge; requirements an outsider would misread |
+
+🧪 marks an **experimental** perspective: adapted from published scenarios, but
+not yet validated against enough real specifications and carrying no reference
+baseline. They are never in the default set. If you suggest one, or run one
+because the user asked, say once that it is experimental — do not present its
+findings as carrying the same weight as the stable three, and never quietly
+promote one into a default run.
+
+**Do not run all seven by default.** More readers is not better: the cost is
+linear, the overlap grows, and the source research is explicit that only the
+most relevant perspectives should be selected for a given inspection. Keep
+`tester` and `designer` in almost every pass — they are the fundamental two.
+
+If the user named perspectives in the third argument, use exactly those. Otherwise use the
+default three, and — only if the spec obviously invites it — say in one line
+which additional perspective looks worth a second pass, and why. Do not run it
+uninvited.
+
+Reject an unknown name rather than guessing at what was meant.
 
 ## 1. Resolve the spec list
 
@@ -24,9 +76,9 @@ folders can share a filename; their outputs must not collide.
 
 ## 2. Spawn the readers
 
-For each spec, create `<output-dir>/<SPEC-ID>/` and spawn the three perspective
-subagents **in a single message, in parallel**: `pbr-tester`, `pbr-designer`,
-`pbr-user`.
+For each spec, create `<output-dir>/<SPEC-ID>/` and spawn the selected
+perspective subagents **in a single message, in parallel** — `pbr-<name>` for
+each name chosen in step 0.
 
 Each prompt contains **only**:
 
@@ -42,6 +94,15 @@ pass finds the defects one reader would have found alone.
 Never write outside `<output-dir>`. The spec files themselves are read-only —
 this command never edits a spec, however tempting the fix looks.
 
+**Resolve a relative `<output-dir>` against the working directory of this
+session — the project the user is running in — and never against the plugin's
+own directory.** Those are different places, and the plugin's directory may be a
+read-only cache or, when the plugin is sideloaded from a checkout, somebody's
+working repository. Writing run output there pollutes it. Before the first
+write, state the absolute path you are writing to, so a wrong root is visible
+immediately rather than after the run. Pass each subagent an absolute output
+path for the same reason.
+
 ### While they run
 
 The readers are tracked work: you are re-invoked automatically as each one
@@ -51,20 +112,22 @@ is not what tells you they are done, and scheduling one is both unnecessary and
 a common source of malformed tool calls.
 
 Report each completion in one line (`<perspective> finished, N blocked rows`),
-and say what you are still waiting on. Nothing else until all three return.
+and say what you are still waiting on. Nothing else until they all return.
 
 ## 3. Consolidate
 
-Read the three files per spec, then write `<output-dir>/<SPEC-ID>/consolidated.md`:
+Read the perspective files for each spec, then write
+`<output-dir>/<SPEC-ID>/consolidated.md`:
 
 - every blocked row from all three perspectives, keeping its original id,
 - rows grouped by the spec clause they attack, with cross-perspective
-  corroboration marked (a clause hit by two or three roles independently is the
-  strongest signal in the whole technique),
+  corroboration marked (a clause hit by two or more roles independently is the
+  strongest signal in the whole technique — state it as a fraction of the
+  perspectives actually run, e.g. 3/4, never out of a number you did not run),
 - rows only one perspective found, called out as the value the parallel run
   bought,
-- the metrics: blocked rows per perspective, distinct spec clauses implicated,
-  ambiguity density.
+- the metrics: which perspectives were run, blocked rows per perspective,
+  distinct spec clauses implicated, ambiguity density.
 
 ### Separate what the spec already admitted from what the readers found
 

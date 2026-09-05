@@ -27,15 +27,43 @@ That inversion is the whole trick:
 You can read "a 10% discount" and nod. You cannot write `expected_total = ?`
 and nod.
 
-Three perspectives ship by default:
+Seven perspectives ship. Three are stable and run by default:
 
 | Perspective | Produces | Catches |
 |---|---|---|
 | **Tester** | The acceptance test cases | Undefined values, missing boundaries, untestable claims |
-| **Designer** | The high-level design | Missing entities and states, concurrency, idempotency, failure modes |
+| **Designer** | The high-level design and data flow | Missing entities, states, interfaces and design constraints |
 | **User** | The help-centre article | Nothing that tells the customer what happened; unspecified second parties |
 
-Eight more — security, SRE, fraud, i18n and others — are sketched in
+Four more are **experimental** — opt in by naming them:
+
+| Perspective | Produces | Catches |
+|---|---|---|
+| **Maintainer** 🧪 | The function and dependency map | Unrecorded rationale, coupling, duplication, no traceability |
+| **Verifier** 🧪 | Negative requirements and a failure analysis | Behaviour the spec forgot to *forbid*; correlated failure |
+| **Regulator** 🧪 | The obligations list and structural map | Missing standards, internal inconsistency, unprovable claims |
+| **Contractor** 🧪 | Assumed knowledge and alternative readings | Tribal knowledge; requirements an outsider would misread |
+
+> **🧪 What "experimental" means here.** These four are adapted from published
+> reading scenarios, and they produce plausible output — but they have not been
+> tested against enough real specifications to know which ones earn their cost,
+> where they overlap the stable three, or how consistent they are between runs.
+> They have no reference baseline yet, so there is nothing to catch a regression
+> in them. Treat their findings as worth reading and not yet worth trusting
+> blindly, and expect their wording to change. The source report is blunt about
+> this: only actual use reveals which scenarios are useful and which should be
+> discarded.
+>
+> They are opt-in for exactly that reason, and they will lose the flask when
+> they have earned it. If you run one, [reporting what
+> happened](CONTRIBUTING.md#reporting-a-run) is the thing that moves them out of
+> this box.
+
+More readers is not automatically better — the cost is linear and the overlap
+grows. Keep tester and designer in almost every pass, and add the others when
+the requirement calls for them.
+
+Further sketches — security, fraud, i18n and others — are in
 `perspectives/EXTRA-perspectives.md`, along with a template for writing your own.
 
 ## Install
@@ -79,11 +107,17 @@ In any project:
 ```
 
 The first argument is a spec file **or** a directory to walk. The optional
-second is where runs are written, defaulting to `./pbr-runs`:
+second is where runs are written, defaulting to `./pbr-runs`. The optional third
+selects the perspectives:
 
 ```
 /apbr:run docs/specs/ ./pbr-runs
+/apbr:run specs/REQ-14.md ./pbr-runs tester,designer,verifier,contractor
 ```
+
+Naming perspectives replaces the default set rather than adding to it, so
+include the stable ones you still want. The four marked 🧪 above are
+experimental — see the note there before relying on what they report.
 
 You get one file per perspective plus a `consolidated.md` that groups every
 blocked row by the spec clause it attacks, and marks which clauses two or three
@@ -154,6 +188,9 @@ this as proven.
 - [Journal version](https://link.springer.com/article/10.1007/BF00368702)
 - [Are the Perspectives Really Different?](https://link.springer.com/article/10.1023/A:1009848320066)
 - [How Perspective-Based Reading Can Improve Requirements Inspections](https://www.researchgate.net/publication/2955334_How_Perspective-Based_Reading_Can_Improve_Requirements_Inspections)
+- J. Lahtinen, *Application of the perspective-based reading technique in the
+  nuclear I&C context* (VTT Technology 9, CORSICA work report 2011) — the source
+  of the seven perspectives shipped here, generalised out of the nuclear domain.
 
 Nothing above has been re-validated for the agent-run variant. That is part of
 what this repository is for.
