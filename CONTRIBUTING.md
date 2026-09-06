@@ -85,6 +85,85 @@ To expose a perspective as its own command later, add `commands/<name>.md` that
 spawns the single agent. The namespace is already shaped for it: the plugin is
 `apbr`, so every command reads `/apbr:<verb>`.
 
+## Choosing a set of perspectives — an open hypothesis
+
+**Nothing in this section is validated.** No profile below has been tested
+against anything. They are recorded here, rather than in the README, because the
+README is where users are told what to rely on and this is not yet that. Treat
+them as hypotheses to attack.
+
+### The move worth learning
+
+The seven perspectives shipped here are not universal. They are one domain's
+selection, generalised. The source report derives them in its §4.2 by asking
+what is true about *its* situation — systems that outlive their authors,
+work subcontracted down a chain, a regulator in the loop, safety consequence —
+and the seven fall out of those facts. Maintainer exists because of the first,
+contractor because of the second, regulator and verifier because of the last two.
+
+So the transferable thing is the derivation, not the list. For a spec of your
+own, ask:
+
+1. **Who is harmed if this is wrong, and how badly?** Consequence selects for
+   `verifier`; reversible, low-stakes work does not need it.
+2. **Who implements it — someone in this conversation, or someone outside it?**
+   Distance selects for `contractor`.
+3. **How long will it live, and who changes it next?** Longevity selects for
+   `maintainer`.
+4. **Does anyone have to be shown that the rules were followed?** Auditability
+   selects for `regulator`.
+5. **Does a person outside the company live with the result?** If not, `user`
+   is weaker than it looks and an internal-operator reading matters more.
+
+Then pick the readers those answers point at. Keep `tester` and `designer` in
+almost every set — they are the fundamental two.
+
+### Illustrations, not recommendations
+
+Each of these is a guess at what the questions above would produce. The second
+column matters as much as the first: **a set is defined by what it leaves out**,
+and the omission is what tells you when the set is wrong for you.
+
+| Situation | Readers | Deliberately does not read for |
+|---|---|---|
+| Customer-facing feature | tester, designer, user | Longevity, compliance evidence, outsider comprehension |
+| Back-office / internal tool | tester, designer, maintainer | Customer comprehension — there is no external customer |
+| API or integration | designer, tester, contractor | End-user experience; the consumer is another system |
+| Regulated or auditable | regulator, verifier, tester | Usability and maintainability |
+| Outsourced build | contractor, designer, regulator | Day-to-day usability; the risk is misinterpretation |
+| Change to existing system | maintainer, verifier | Anything about the new behaviour in isolation |
+
+### Why this is not shipped as a feature
+
+There is no `@profile` shorthand and the default remains `tester,designer,user`.
+A named shorthand reads as a validated feature, and a set is a **stronger** claim
+than a perspective: it asserts that these readers are sufficient together and
+that the omitted ones are not needed. Four of the seven are still 🧪 with no
+baseline, so a validated claim about combinations is not available yet.
+
+The failure mode being avoided is a wrong set propagating its blind spot,
+silently, to everyone who adopts it — and sets are exactly the kind of thing
+nobody revisits once they are named.
+
+### What would move a profile into the README
+
+The same bar as a perspective, one level up: runs across several specs showing
+the set has decent coverage and low internal redundancy — no member whose rows
+are consistently contained in another member's.
+
+Note that subsumption is an argument about *sets*, not about deletion. If reader
+A's findings sit inside reader B's, that only means the two are wasteful in the
+same pass. A may still be worth running alone as a cheaper, narrower probe, or
+alongside a third reader without B. Measure it to compose sets, never to cull the
+catalogue.
+
+### The hypothesis most worth attacking
+
+That profiles help at all. Running the default three and adding one reader when
+something looks off may simply beat choosing a set up front. If that turns out to
+be true, this section should be deleted rather than expanded — and finding that
+out is a more useful contribution than adding a seventh row to the table.
+
 ## Rules that are not up for negotiation
 
 These are the technique, not style preferences. A change that weakens one of
@@ -133,6 +212,15 @@ Roughly in priority order:
   then compare. Where the agent and the human diverge is where the perspective
   file is wrong. This is the most valuable contribution anyone can make, and it
   needs no code.
+- **Test whether choosing a set of perspectives helps at all.** See the open
+  hypothesis above. The comparison is a chosen set against "run the default
+  three, add a reader when something looks off". A negative result deletes that
+  section, which is a perfectly good outcome.
+- **Measure per-perspective unique yield.** Across several specs, what fraction
+  of a reader's rows did only that reader produce? Counting discovered rows
+  only — pre-announced gaps inflate both corroboration and apparent redundancy.
+  This is the evidence that lets a perspective lose its 🧪, and the same numbers
+  compose sets.
 - **Measure divergence across models.** The same perspective on a different
   model should find substantially the same rows. If it doesn't, the perspective
   is underspecified.

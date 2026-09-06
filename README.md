@@ -63,6 +63,12 @@ More readers is not automatically better — the cost is linear and the overlap
 grows. Keep tester and designer in almost every pass, and add the others when
 the requirement calls for them.
 
+There is no preset bundle for a "kind" of spec, deliberately: naming a set
+asserts both that its readers are sufficient and that the omitted ones aren't
+needed, which is a stronger claim than this repo can yet support. If you want to
+reason about which readers your situation calls for, [CONTRIBUTING.md](CONTRIBUTING.md#choosing-a-set-of-perspectives--an-open-hypothesis)
+records the question set and some untested illustrations.
+
 Further sketches — security, fraud, i18n and others — are in
 `perspectives/EXTRA-perspectives.md`, along with a template for writing your own.
 
